@@ -13,3 +13,4 @@ features = ["extension-module"]
 
 [dependencies]
 nalgebra = "0.32.1"
+approx = "0.5.1"
