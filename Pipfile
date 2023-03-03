@@ -1,0 +1,17 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[scripts]
+develop = "python -m maturin develop"
+test = "python -m pytest"
+
+[packages]
+pytest = "*"
+
+[dev-packages]
+maturin = "*"
+
+[requires]
+python_version = "3.9"
