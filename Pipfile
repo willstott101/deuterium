@@ -4,7 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [scripts]
-develop = "sh -c 'python -m maturin develop ; python -i -c \"from deuterium import *\"'"
+develop = "sh -c 'python -m maturin develop -r ; python -i -c \"from deuterium import *; from timeit import timeit\"'"
 test = "python -m pytest"
 
 [packages]

@@ -44,6 +44,8 @@ impl Vector3 {
     }
 
     fn __getitem__(&self, py: Python, idx: i32) -> Result<Py<PyAny>, PyErr> {
+        // Even this is slower than numpy...
+        // Ok(self.0[0].into_py(py))
         let i: usize = if idx < 0 && idx > -(self.0.len() as i32 + 1) {
             (self.0.len() as i32 + idx) as usize
         } else {
