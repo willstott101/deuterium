@@ -8,7 +8,7 @@ type Matrix4d = SMatrix<f64, 4, 4>;
 
 #[pyclass]
 pub struct Matrix4 {
-    m: Matrix4d,
+    pub m: Matrix4d,
 }
 
 #[pymethods]
@@ -56,6 +56,10 @@ impl Matrix4 {
 
     fn __imul__(&mut self, arg: &Matrix4) -> () {
         self.m = self.m * arg.m;
+    }
+
+    fn __len__(&self) -> usize {
+        4
     }
 
     fn premultiply(&mut self, arg: &Matrix4) -> () {
