@@ -1,8 +1,8 @@
+use approx::AbsDiffEq;
 use nalgebra::SMatrix;
 use pyo3::prelude::*;
-use pyo3::types::PyTuple;
 use pyo3::pyclass::CompareOp;
-use approx::AbsDiffEq;
+use pyo3::types::PyTuple;
 
 type Matrix4d = SMatrix<f64, 4, 4>;
 
@@ -40,9 +40,9 @@ impl Matrix4 {
 
     fn __richcmp__(&self, py: Python, other: &Matrix4, op: CompareOp) -> Py<PyAny> {
         match op {
-          CompareOp::Eq => (self.m == other.m).into_py(py),
-          CompareOp::Ne => (self.m != other.m).into_py(py),
-          _ => py.NotImplemented(),
+            CompareOp::Eq => (self.m == other.m).into_py(py),
+            CompareOp::Ne => (self.m != other.m).into_py(py),
+            _ => py.NotImplemented(),
         }
     }
 
