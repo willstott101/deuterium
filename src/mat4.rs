@@ -1,5 +1,6 @@
 use approx::AbsDiffEq;
 use nalgebra::SMatrix;
+use pyo3::exceptions::PyIndexError;
 use pyo3::prelude::*;
 use pyo3::pyclass::CompareOp;
 use pyo3::types::PyTuple;
@@ -21,16 +22,27 @@ impl Matrix4 {
     }
 
     fn __getitem__(&self, py: Python, arg: &PyAny) -> Result<Py<PyAny>, PyErr> {
-        let idx: Result<(usize, usize), PyErr> = arg.extract();
+        let idx: Result<(isize, isize), PyErr> = arg.extract();
         match idx {
             Err(_) => {
-                let i: Result<usize, PyErr> = arg.extract();
+                let i: Result<isize, PyErr> = arg.extract();
                 match i {
-                    Ok(i_int) => Ok(PyTuple::new(py, self.m.row(i_int).iter()).into()),
+                    Ok(i_int) => {
+                        if i_int > 3 || i_int < 0 {
+                            Err(PyIndexError::new_err(i_int))?;
+                        }
+                        Ok(PyTuple::new(py, self.m.row(i_int as usize).iter()).into())
+                    },
                     Err(e) => Err(e),
                 }
             }
-            Ok(pair) => Ok(self.m[pair].to_object(py)),
+            Ok(pair) => {
+                if pair.0 < 0 || pair.1 < 0 || pair.0 > 3 || pair.1 > 3 {
+                    Err(PyIndexError::new_err(pair))
+                } else {
+                    Ok(self.m[(pair.0 as usize, pair.1 as usize)].to_object(py))
+                }
+            },
         }
     }
 
