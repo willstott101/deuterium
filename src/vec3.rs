@@ -9,7 +9,7 @@ use crate::mat4;
 type Vector3d = SVector<f64, 3>;
 type Vector4d = SVector<f64, 4>;
 
-#[pyclass]
+#[pyclass(sequence)]
 pub struct Vector3(Vector3d);
 
 #[pymethods]
@@ -43,11 +43,9 @@ impl Vector3 {
         return Vector3(Vector3d::new(0.0, 0.0, 1.0));
     }
 
-    fn __getitem__(&self, py: Python, idx: i32) -> Result<Py<PyAny>, PyErr> {
-        // Even this is slower than numpy...
-        // Ok(self.0[0].into_py(py))
-        let i: usize = if idx < 0 && idx > -(self.0.len() as i32 + 1) {
-            (self.0.len() as i32 + idx) as usize
+    fn __getitem__(&self, idx: isize) -> Result<f64, PyErr> {
+        let i: usize = if idx < 0 && idx > -(self.0.len() as isize + 1) {
+            (self.0.len() as isize + idx) as usize
         } else {
             match TryInto::<usize>::try_into(idx) {
                 Err(_) => Err(PyIndexError::new_err(idx))?,
@@ -55,13 +53,13 @@ impl Vector3 {
             }
         };
         match self.0.get(i) {
-            Some(v) => Ok(v.into_py(py)),
+            Some(v) => Ok(v.clone()),
             None => Err(PyIndexError::new_err(idx)),
         }
     }
 
-    fn __setitem__(&mut self, idx: i32, value: f64) -> Result<(), PyErr> {
-        let i: usize = if idx < 0 && idx > -(self.0.len() as i32 + 1) {
+    fn __setitem__(&mut self, idx: isize, value: f64) -> Result<(), PyErr> {
+        let i: usize = if idx < 0 && idx > -(self.0.len() as isize + 1) {
             self.0.len() - idx as usize
         } else {
             let ui: usize = idx.try_into()?;
@@ -71,6 +69,9 @@ impl Vector3 {
         self.0[i] = value;
         Ok(())
     }
+
+    #[classattr]
+    const __contains__: Option<PyObject> = None;
 
     fn __richcmp__(&self, py: Python, other: &Vector3, op: CompareOp) -> Py<PyAny> {
         match op {
