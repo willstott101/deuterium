@@ -130,6 +130,14 @@ impl Vector3 {
         self.0[2] = v[2];
     }
 
+    fn __neg__(&self) -> Vector3 {
+        Vector3(-self.0)
+    }
+
+    fn negate(&mut self) -> () {
+        self.0 = -self.0;
+    }
+
     fn tuple(&self) -> (f64, f64, f64) {
         return (self.0[0], self.0[1], self.0[2]);
     }

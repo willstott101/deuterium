@@ -31,3 +31,19 @@ def test_indexing():
 
     with pytest.raises(IndexError):
         Vector3(1, 2, 3)[-4]
+
+
+def test_ops():
+    assert Vector3(1, 2, 3) + Vector3(10, 20, 30) == Vector3(11, 22, 33)
+    assert Vector3(1, 2, 3) - Vector3(10, 20, 30) == Vector3(-9, -18, -27)
+    v = Vector3(1, 2, 3)
+    v += Vector3(10, 20, 30)
+    assert v == Vector3(11, 22, 33)
+    v -= Vector3(10, 20, 30)
+    assert v == Vector3(1, 2, 3)
+    assert v * 5 == Vector3(5, 10, 15)
+    v *= 10
+    assert v == Vector3(10, 20, 30)
+    assert -v == Vector3(-10, -20, -30)
+    v.negate()
+    assert v == Vector3(-10, -20, -30)
