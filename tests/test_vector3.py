@@ -2,7 +2,7 @@ import pytest
 from deuterium import Vector3
 
 
-def test_constructor():
+def test_construction():
     assert Vector3(1.0, 2.0, 3.0)
     assert Vector3(1, 2, 3) == Vector3(1.0, 2.0, 3.0)
     assert Vector3(1) == Vector3(1, 0, 0)
@@ -10,12 +10,28 @@ def test_constructor():
     assert Vector3(x=1) == Vector3(1, 0, 0)
     assert Vector3(y=2) == Vector3(0, 2, 0)
     assert Vector3(z=3) == Vector3(0, 0, 3)
+    assert Vector3.x() == Vector3(1, 0, 0)
+    assert Vector3.y() == Vector3(0, 1, 0)
+    assert Vector3.z() == Vector3(0, 0, 1)
+    assert Vector3() == Vector3(0, 0, 0)
+    assert Vector3.zero() == Vector3(0, 0, 0)
 
 
 def test_repr():
     v = Vector3(1.0, 2.0, 3.0)
     assert repr(v) == "Vector3(1, 2, 3)"
     assert repr(v) == str(v)
+
+
+def test_equality():
+    assert Vector3(1, 0, 0) != Vector3(0, 0, 0)
+    assert Vector3(0, 1, 0) != Vector3(0, 0, 0)
+    assert Vector3(0, 0, 1) != Vector3(0, 0, 0)
+
+    assert Vector3(0, 0, 0.000001) != Vector3(0, 0, 0)
+    assert not Vector3(0, 0, 0.000001).approx_equals(Vector3(0, 0, 0))
+    assert Vector3(0, 0, 0.0000000001) != Vector3(0, 0, 0)
+    assert Vector3(0, 0, 0.0000000001).approx_equals(Vector3(0, 0, 0))
 
 
 def test_indexing():
