@@ -28,7 +28,7 @@ impl Matrix4 {
                             Err(PyIndexError::new_err(i_int))?;
                         }
                         Ok(PyTuple::new(py, self.0.row(i_int as usize).iter()).into())
-                    },
+                    }
                     Err(e) => Err(e),
                 }
             }
@@ -38,7 +38,7 @@ impl Matrix4 {
                 } else {
                     Ok(self.0[(pair.0 as usize, pair.1 as usize)].to_object(py))
                 }
-            },
+            }
         }
     }
 
