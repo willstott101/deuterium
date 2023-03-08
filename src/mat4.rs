@@ -1,3 +1,4 @@
+use crate::vec3::Vector3;
 use approx::AbsDiffEq;
 use nalgebra::SMatrix;
 use pyo3::exceptions::PyIndexError;
@@ -58,8 +59,16 @@ impl Matrix4 {
         self.0.abs_diff_eq(&arg.0, 1e-08)
     }
 
-    fn __mul__(&self, arg: &Matrix4) -> Matrix4 {
-        Matrix4(self.0 * arg.0)
+    fn __mul__(&self, py: Python, arg: &PyAny) -> PyResult<PyObject> {
+        let matr: PyResult<PyRef<Matrix4>> = arg.extract();
+        if let Ok(mat) = matr {
+            return Ok(Py::new(py, Matrix4(self.0 * mat.0))?.to_object(py));
+        }
+        let vecr: PyResult<PyRef<Vector3>> = arg.extract();
+        if let Ok(vec) = vecr {
+            return Ok(Py::new(py, Vector3::from_4(&(self.0 * vec.as_4())))?.to_object(py));
+        }
+        Ok(py.NotImplemented())
     }
 
     fn __imul__(&mut self, arg: &Matrix4) -> () {
@@ -73,6 +82,12 @@ impl Matrix4 {
     fn premultiply(&mut self, arg: &Matrix4) -> () {
         self.0 = arg.0 * self.0;
     }
+
+    // fn invert(&mut self) -> PyResult<()> {
+    //     // TODO: Switch to nalgebra's Transform, and use it's inverse
+    //     self.0 = self.0.pseudo_inverse(0.00001)?;
+    //     Ok(());
+    // }
 
     fn tuple(
         &self,

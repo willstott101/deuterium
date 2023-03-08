@@ -7,10 +7,20 @@ use pyo3::pyclass::CompareOp;
 use crate::mat4;
 
 type Vector3d = SVector<f64, 3>;
-type Vector4d = SVector<f64, 4>;
+pub type Vector4d = SVector<f64, 4>;
 
 #[pyclass(sequence)]
-pub struct Vector3(Vector3d);
+pub struct Vector3(pub Vector3d);
+
+impl Vector3 {
+    pub fn as_4(&self) -> Vector4d {
+        Vector4d::new(self.0[0], self.0[1], self.0[2], 1.0)
+    }
+
+    pub fn from_4(v: &Vector4d) -> Vector3 {
+        Vector3(Vector3d::new(v[0], v[1], v[2]))
+    }
+}
 
 #[pymethods]
 impl Vector3 {
@@ -124,7 +134,7 @@ impl Vector3 {
     }
 
     fn premultiply(&mut self, arg: &mat4::Matrix4) -> () {
-        let v = arg.0 * Vector4d::new(self.0[0], self.0[1], self.0[2], 1.0);
+        let v = arg.0 * self.as_4();
         self.0[0] = v[0];
         self.0[1] = v[1];
         self.0[2] = v[2];
