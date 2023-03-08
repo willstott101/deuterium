@@ -45,6 +45,17 @@ def test_indexing():
         m[-1, 1]
 
 
+def test_index_mutation():
+    m = Matrix4.identity()
+    for a in range(4):
+        for b in range(4):
+            m[a, b] = a * 10 + b
+
+    for a in range(4):
+        for b in range(4):
+            assert m[a, b] == a * 10 + b
+
+
 # def test_ops():
 #     assert Vector3(1, 2, 3) + Vector3(10, 20, 30) == Vector3(11, 22, 33)
 #     assert Vector3(1, 2, 3) - Vector3(10, 20, 30) == Vector3(-9, -18, -27)

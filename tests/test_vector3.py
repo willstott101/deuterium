@@ -49,6 +49,16 @@ def test_indexing():
         Vector3(1, 2, 3)[-4]
 
 
+def test_index_mutation():
+    v = Vector3(1, 2, 3)
+    v[0] = 99
+    assert v == Vector3(99, 2, 3)
+    v[1] = -2
+    assert v == Vector3(99, -2, 3)
+    v[2] = 12
+    assert v == Vector3(99, -2, 12)
+
+
 def test_ops():
     assert Vector3(1, 2, 3) + Vector3(10, 20, 30) == Vector3(11, 22, 33)
     assert Vector3(1, 2, 3) - Vector3(10, 20, 30) == Vector3(-9, -18, -27)
