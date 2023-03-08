@@ -124,7 +124,7 @@ impl Vector3 {
     }
 
     fn premultiply(&mut self, arg: &mat4::Matrix4) -> () {
-        let v = arg.m * Vector4d::new(self.0[0], self.0[1], self.0[2], 1.0);
+        let v = arg.0 * Vector4d::new(self.0[0], self.0[1], self.0[2], 1.0);
         self.0[0] = v[0];
         self.0[1] = v[1];
         self.0[2] = v[2];

@@ -8,17 +8,13 @@ use pyo3::types::PyTuple;
 type Matrix4d = SMatrix<f64, 4, 4>;
 
 #[pyclass]
-pub struct Matrix4 {
-    pub m: Matrix4d,
-}
+pub struct Matrix4(pub Matrix4d);
 
 #[pymethods]
 impl Matrix4 {
     #[staticmethod]
     fn identity() -> Matrix4 {
-        return Matrix4 {
-            m: Matrix4d::identity(),
-        };
+        return Matrix4(Matrix4d::identity());
     }
 
     fn __getitem__(&self, py: Python, arg: &PyAny) -> Result<Py<PyAny>, PyErr> {
@@ -31,7 +27,7 @@ impl Matrix4 {
                         if i_int > 3 || i_int < 0 {
                             Err(PyIndexError::new_err(i_int))?;
                         }
-                        Ok(PyTuple::new(py, self.m.row(i_int as usize).iter()).into())
+                        Ok(PyTuple::new(py, self.0.row(i_int as usize).iter()).into())
                     },
                     Err(e) => Err(e),
                 }
@@ -40,34 +36,34 @@ impl Matrix4 {
                 if pair.0 < 0 || pair.1 < 0 || pair.0 > 3 || pair.1 > 3 {
                     Err(PyIndexError::new_err(pair))
                 } else {
-                    Ok(self.m[(pair.0 as usize, pair.1 as usize)].to_object(py))
+                    Ok(self.0[(pair.0 as usize, pair.1 as usize)].to_object(py))
                 }
             },
         }
     }
 
     fn __setitem__(&mut self, idx: (usize, usize), value: f64) -> () {
-        self.m[idx] = value;
+        self.0[idx] = value;
     }
 
     fn __richcmp__(&self, py: Python, other: &Matrix4, op: CompareOp) -> Py<PyAny> {
         match op {
-            CompareOp::Eq => (self.m == other.m).into_py(py),
-            CompareOp::Ne => (self.m != other.m).into_py(py),
+            CompareOp::Eq => (self.0 == other.0).into_py(py),
+            CompareOp::Ne => (self.0 != other.0).into_py(py),
             _ => py.NotImplemented(),
         }
     }
 
     fn approx_equals(&self, arg: &Matrix4) -> bool {
-        self.m.abs_diff_eq(&arg.m, 1e-08)
+        self.0.abs_diff_eq(&arg.0, 1e-08)
     }
 
     fn __mul__(&self, arg: &Matrix4) -> Matrix4 {
-        Matrix4 { m: self.m * arg.m }
+        Matrix4(self.0 * arg.0)
     }
 
     fn __imul__(&mut self, arg: &Matrix4) -> () {
-        self.m = self.m * arg.m;
+        self.0 = self.0 * arg.0;
     }
 
     fn __len__(&self) -> usize {
@@ -75,7 +71,7 @@ impl Matrix4 {
     }
 
     fn premultiply(&mut self, arg: &Matrix4) -> () {
-        self.m = arg.m * self.m;
+        self.0 = arg.0 * self.0;
     }
 
     fn tuple(
@@ -88,28 +84,28 @@ impl Matrix4 {
     ) {
         return (
             (
-                self.m[(0, 0)],
-                self.m[(0, 1)],
-                self.m[(0, 2)],
-                self.m[(0, 3)],
+                self.0[(0, 0)],
+                self.0[(0, 1)],
+                self.0[(0, 2)],
+                self.0[(0, 3)],
             ),
             (
-                self.m[(1, 0)],
-                self.m[(1, 1)],
-                self.m[(1, 2)],
-                self.m[(1, 3)],
+                self.0[(1, 0)],
+                self.0[(1, 1)],
+                self.0[(1, 2)],
+                self.0[(1, 3)],
             ),
             (
-                self.m[(2, 0)],
-                self.m[(2, 1)],
-                self.m[(2, 2)],
-                self.m[(2, 3)],
+                self.0[(2, 0)],
+                self.0[(2, 1)],
+                self.0[(2, 2)],
+                self.0[(2, 3)],
             ),
             (
-                self.m[(3, 0)],
-                self.m[(3, 1)],
-                self.m[(3, 2)],
-                self.m[(3, 3)],
+                self.0[(3, 0)],
+                self.0[(3, 1)],
+                self.0[(3, 2)],
+                self.0[(3, 3)],
             ),
         );
     }
@@ -117,28 +113,28 @@ impl Matrix4 {
     fn list(&self) -> [[f64; 4]; 4] {
         return [
             [
-                self.m[(0, 0)],
-                self.m[(0, 1)],
-                self.m[(0, 2)],
-                self.m[(0, 3)],
+                self.0[(0, 0)],
+                self.0[(0, 1)],
+                self.0[(0, 2)],
+                self.0[(0, 3)],
             ],
             [
-                self.m[(1, 0)],
-                self.m[(1, 1)],
-                self.m[(1, 2)],
-                self.m[(1, 3)],
+                self.0[(1, 0)],
+                self.0[(1, 1)],
+                self.0[(1, 2)],
+                self.0[(1, 3)],
             ],
             [
-                self.m[(2, 0)],
-                self.m[(2, 1)],
-                self.m[(2, 2)],
-                self.m[(2, 3)],
+                self.0[(2, 0)],
+                self.0[(2, 1)],
+                self.0[(2, 2)],
+                self.0[(2, 3)],
             ],
             [
-                self.m[(3, 0)],
-                self.m[(3, 1)],
-                self.m[(3, 2)],
-                self.m[(3, 3)],
+                self.0[(3, 0)],
+                self.0[(3, 1)],
+                self.0[(3, 2)],
+                self.0[(3, 3)],
             ],
         ];
     }
