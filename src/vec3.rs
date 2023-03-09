@@ -17,6 +17,22 @@ impl Vector3 {
     pub fn from_4(v: &na::Vector4<f64>) -> Vector3 {
         Vector3(na::Vector3::new(v[0], v[1], v[2]))
     }
+
+    pub fn as_p3(&self) -> na::Point3<f64> {
+        na::Point3::new(self.0[0], self.0[1], self.0[2])
+    }
+
+    pub fn from_p3(v: &na::Point3<f64>) -> Vector3 {
+        Vector3(na::Vector3::new(v[0], v[1], v[2]))
+    }
+
+    pub fn as_translation(&self) -> na::Translation3<f64> {
+        na::Translation3::new(self.0[0], self.0[1], self.0[2])
+    }
+
+    pub fn from_translation(v: &na::Translation3<f64>) -> Vector3 {
+        Vector3(na::Vector3::new(v.x, v.y, v.z))
+    }
 }
 
 #[pymethods]

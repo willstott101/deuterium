@@ -94,7 +94,7 @@ impl Matrix4 {
     }
 
     // fn invert(&mut self) -> PyResult<()> {
-    //     // TODO: Switch to nalgebra's Transform, and use it's inverse
+    //     // TODO: Should this Matrix be an nalgebra Projective? 
     //     self.0 = self.0.pseudo_inverse(0.00001)?;
     //     Ok(());
     // }
