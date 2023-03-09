@@ -6,7 +6,7 @@ use pyo3::pyclass::CompareOp;
 
 use crate::mat4;
 
-type Vector3d = SVector<f64, 3>;
+pub type Vector3d = SVector<f64, 3>;
 pub type Vector4d = SVector<f64, 4>;
 
 #[pyclass(sequence)]

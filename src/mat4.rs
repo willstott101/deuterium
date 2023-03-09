@@ -1,4 +1,4 @@
-use crate::vec3::Vector3;
+use crate::vec3::{Vector3, Vector3d};
 use approx::AbsDiffEq;
 use nalgebra::SMatrix;
 use pyo3::exceptions::PyIndexError;
@@ -6,7 +6,7 @@ use pyo3::prelude::*;
 use pyo3::pyclass::CompareOp;
 use pyo3::types::PyTuple;
 
-type Matrix4d = SMatrix<f64, 4, 4>;
+pub type Matrix4d = SMatrix<f64, 4, 4>;
 
 #[pyclass]
 pub struct Matrix4(pub Matrix4d);
@@ -16,6 +16,15 @@ impl Matrix4 {
     #[staticmethod]
     fn identity() -> Matrix4 {
         return Matrix4(Matrix4d::identity());
+    }
+
+    #[staticmethod]
+    fn from_translation(v: &Vector3) -> Matrix4 {
+        let mut m = Matrix4d::identity();
+        m[(0, 3)] = v.0[0];
+        m[(1, 3)] = v.0[1];
+        m[(2, 3)] = v.0[2];
+        return Matrix4(m);
     }
 
     fn __getitem__(&self, py: Python, arg: &PyAny) -> Result<Py<PyAny>, PyErr> {
@@ -88,6 +97,25 @@ impl Matrix4 {
     //     self.0 = self.0.pseudo_inverse(0.00001)?;
     //     Ok(());
     // }
+
+    #[getter]
+    fn get_translation(&self) -> Vector3 {
+        Vector3(Vector3d::new(self.0[(0, 3)], self.0[(1, 3)], self.0[(2, 3)]))
+    }
+
+    #[setter]
+    fn set_translation(&mut self, v: PyRef<Vector3>) -> PyResult<()> {
+        self.0[(0, 3)] = v.0[0];
+        self.0[(1, 3)] = v.0[1];
+        self.0[(2, 3)] = v.0[2];
+        Ok(())
+    }
+
+    fn translate(&mut self, v: PyRef<Vector3>) -> () {
+        self.0[(0, 3)] += v.0[0];
+        self.0[(1, 3)] += v.0[1];
+        self.0[(2, 3)] += v.0[2];
+    }
 
     fn tuple(
         &self,
