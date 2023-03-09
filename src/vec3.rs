@@ -1,24 +1,21 @@
 use approx::AbsDiffEq;
-use nalgebra::SVector;
+use nalgebra as na;
 use pyo3::exceptions::PyIndexError;
 use pyo3::prelude::*;
 use pyo3::pyclass::CompareOp;
 
 use crate::mat4;
 
-pub type Vector3d = SVector<f64, 3>;
-pub type Vector4d = SVector<f64, 4>;
-
 #[pyclass(sequence)]
-pub struct Vector3(pub Vector3d);
+pub struct Vector3(pub na::Vector3<f64>);
 
 impl Vector3 {
-    pub fn as_4(&self) -> Vector4d {
-        Vector4d::new(self.0[0], self.0[1], self.0[2], 1.0)
+    pub fn as_4(&self) -> na::Vector4<f64> {
+        na::Vector4::new(self.0[0], self.0[1], self.0[2], 1.0)
     }
 
-    pub fn from_4(v: &Vector4d) -> Vector3 {
-        Vector3(Vector3d::new(v[0], v[1], v[2]))
+    pub fn from_4(v: &na::Vector4<f64>) -> Vector3 {
+        Vector3(na::Vector3::new(v[0], v[1], v[2]))
     }
 }
 
@@ -26,7 +23,7 @@ impl Vector3 {
 impl Vector3 {
     #[new]
     fn new(x: Option<f64>, y: Option<f64>, z: Option<f64>) -> Self {
-        return Vector3(Vector3d::new(
+        return Vector3(na::Vector3::new(
             x.unwrap_or(0.0),
             y.unwrap_or(0.0),
             z.unwrap_or(0.0),
@@ -35,22 +32,22 @@ impl Vector3 {
 
     #[staticmethod]
     fn zero() -> Vector3 {
-        return Vector3(Vector3d::new(0.0, 0.0, 0.0));
+        return Vector3(na::Vector3::new(0.0, 0.0, 0.0));
     }
 
     #[staticmethod]
     fn x() -> Vector3 {
-        return Vector3(Vector3d::new(1.0, 0.0, 0.0));
+        return Vector3(na::Vector3::new(1.0, 0.0, 0.0));
     }
 
     #[staticmethod]
     fn y() -> Vector3 {
-        return Vector3(Vector3d::new(0.0, 1.0, 0.0));
+        return Vector3(na::Vector3::new(0.0, 1.0, 0.0));
     }
 
     #[staticmethod]
     fn z() -> Vector3 {
-        return Vector3(Vector3d::new(0.0, 0.0, 1.0));
+        return Vector3(na::Vector3::new(0.0, 0.0, 1.0));
     }
 
     fn __getitem__(&self, idx: isize) -> Result<f64, PyErr> {
@@ -120,7 +117,7 @@ impl Vector3 {
     }
 
     fn __mul__(&self, arg: f64) -> Vector3 {
-        Vector3(Vector3d::new(
+        Vector3(na::Vector3::new(
             self.0[0] * arg,
             self.0[1] * arg,
             self.0[2] * arg,
