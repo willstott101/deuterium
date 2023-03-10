@@ -47,14 +47,15 @@ impl Vector3 {
         ))
     }
 
-    #[staticmethod]
-    fn from_seq(v: &PySequence, offset: Option<usize>) -> PyResult<Self> {
-        let off = offset.unwrap_or(0);
-        let x: f64 = v.get_item(off)?.extract()?;
-        let y: f64 = v.get_item(off + 1)?.extract()?;
-        let z: f64 = v.get_item(off + 2)?.extract()?;
-        Ok(Vector3(na::Vector3::new(x, y, z)))
-    }
+    // Slower than Vector3(*arr[1:4])... not worth it
+    // #[staticmethod]
+    // fn from_seq(v: &PySequence, offset: Option<usize>) -> PyResult<Self> {
+    //     let off = offset.unwrap_or(0);
+    //     let x: f64 = v.get_item(off)?.extract()?;
+    //     let y: f64 = v.get_item(off + 1)?.extract()?;
+    //     let z: f64 = v.get_item(off + 2)?.extract()?;
+    //     Ok(Vector3(na::Vector3::new(x, y, z)))
+    // }
 
     #[getter]
     fn get_x(&self) -> f64 {
