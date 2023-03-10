@@ -11,6 +11,8 @@ def test_construction():
     assert Vector3(y=2) == Vector3(0, 2, 0)
     assert Vector3(z=3) == Vector3(0, 0, 3)
     assert Vector3() == Vector3(0, 0, 0)
+    assert Vector3.from_seq([1, 2, 3, 4]) == Vector3(1, 2, 3)
+    assert Vector3.from_seq([1, 2, 3, 4, 5], 2) == Vector3(3, 4, 5)
 
 
 def test_repr():

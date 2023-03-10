@@ -3,6 +3,7 @@ use nalgebra as na;
 use pyo3::exceptions::PyIndexError;
 use pyo3::prelude::*;
 use pyo3::pyclass::CompareOp;
+use pyo3::types::PySequence;
 
 use crate::mat4;
 
@@ -39,11 +40,20 @@ impl Vector3 {
 impl Vector3 {
     #[new]
     fn new(x: Option<f64>, y: Option<f64>, z: Option<f64>) -> Self {
-        return Vector3(na::Vector3::new(
+        Vector3(na::Vector3::new(
             x.unwrap_or(0.0),
             y.unwrap_or(0.0),
             z.unwrap_or(0.0),
-        ));
+        ))
+    }
+
+    #[staticmethod]
+    fn from_seq(v: &PySequence, offset: Option<usize>) -> PyResult<Self> {
+        let off = offset.unwrap_or(0);
+        let x: f64 = v.get_item(off)?.extract()?;
+        let y: f64 = v.get_item(off + 1)?.extract()?;
+        let z: f64 = v.get_item(off + 2)?.extract()?;
+        Ok(Vector3(na::Vector3::new(x, y, z)))
     }
 
     #[getter]
