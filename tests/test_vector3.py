@@ -61,11 +61,19 @@ def test_index_mutation():
 
 def test_iter():
     assert len(Vector3(0, 0, 0)) == 3
+    assert list(Vector3(1, 2, 3)) == [1, 2, 3]
+
+
+def test_length_and_normalization():
     assert Vector3(2, 0, 0).length() == 2
     assert Vector3(2, 0, 0).length_squared() == 4
+    assert Vector3(2, 0, 0).normalized() == Vector3(1, 0, 0)
+    v = Vector3(0, 0.5, 0)
+    v.normalize()
+    assert v == Vector3(0, 1, 0)
 
 
-def test_ops():
+def test_simple_ops():
     assert Vector3(1, 2, 3) + Vector3(10, 20, 30) == Vector3(11, 22, 33)
     assert Vector3(1, 2, 3) - Vector3(10, 20, 30) == Vector3(-9, -18, -27)
     v = Vector3(1, 2, 3)
@@ -79,3 +87,8 @@ def test_ops():
     assert -v == Vector3(-10, -20, -30)
     v.negate()
     assert v == Vector3(-10, -20, -30)
+
+
+def test_distances():
+    assert Vector3(0, 1, 0).distance_to(Vector3(0, -20, 0)) == 21
+    assert Vector3(0, 1, 0).distance_to_squared(Vector3(0, -1, 0)) == 4

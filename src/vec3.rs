@@ -128,6 +128,23 @@ impl Vector3 {
         self.0.magnitude_squared()
     }
 
+    fn normalize(&mut self) -> PyResult<()> {
+        self.0.normalize_mut();
+        Ok(())
+    }
+
+    fn normalized(&self) -> PyResult<Vector3> {
+        Ok(Vector3(self.0.normalize()))
+    }
+
+    fn distance_to(&self, other: PyRef<Vector3>) -> f64 {
+        (other.0 - self.0).magnitude()
+    }
+
+    fn distance_to_squared(&self, other: PyRef<Vector3>) -> f64 {
+        (other.0 - self.0).magnitude_squared()
+    }
+
     fn __iadd__(&mut self, v: &Vector3) -> () {
         self.0[0] += v.0[0];
         self.0[1] += v.0[1];
