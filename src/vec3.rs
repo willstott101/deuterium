@@ -46,24 +46,34 @@ impl Vector3 {
         ));
     }
 
-    #[staticmethod]
-    fn zero() -> Vector3 {
-        return Vector3(na::Vector3::new(0.0, 0.0, 0.0));
+    #[getter]
+    fn get_x(&self) -> f64 {
+        self.0.x
     }
 
-    #[staticmethod]
-    fn x() -> Vector3 {
-        return Vector3(na::Vector3::new(1.0, 0.0, 0.0));
+    #[setter]
+    fn set_x(&mut self, arg: f64) -> () {
+        self.0.x = arg;
     }
 
-    #[staticmethod]
-    fn y() -> Vector3 {
-        return Vector3(na::Vector3::new(0.0, 1.0, 0.0));
+    #[getter]
+    fn get_y(&self) -> f64 {
+        self.0.y
     }
 
-    #[staticmethod]
-    fn z() -> Vector3 {
-        return Vector3(na::Vector3::new(0.0, 0.0, 1.0));
+    #[setter]
+    fn set_y(&mut self, arg: f64) -> () {
+        self.0.y = arg;
+    }
+
+    #[getter]
+    fn get_z(&self) -> f64 {
+        self.0.z
+    }
+
+    #[setter]
+    fn set_z(&mut self, arg: f64) -> () {
+        self.0.z = arg;
     }
 
     fn __getitem__(&self, idx: isize) -> Result<f64, PyErr> {
@@ -158,17 +168,19 @@ impl Vector3 {
     }
 
     fn __mul__(&self, arg: f64) -> Vector3 {
-        Vector3(na::Vector3::new(
-            self.0[0] * arg,
-            self.0[1] * arg,
-            self.0[2] * arg,
-        ))
+        Vector3(self.0 * arg)
     }
 
     fn __imul__(&mut self, arg: f64) -> () {
-        self.0[0] *= arg;
-        self.0[1] *= arg;
-        self.0[2] *= arg;
+        self.0 *= arg;
+    }
+
+    fn __truediv__(&self, arg: f64) -> Vector3 {
+        Vector3(self.0 / arg)
+    }
+
+    fn __itruediv__(&mut self, arg: f64) -> () {
+        self.0 /= arg;
     }
 
     fn premultiply(&mut self, arg: &mat4::Matrix4) -> () {
@@ -176,6 +188,19 @@ impl Vector3 {
         self.0[0] = v[0];
         self.0[1] = v[1];
         self.0[2] = v[2];
+    }
+
+    fn cross(&self, v: PyRef<Vector3>) -> Vector3 {
+        let x = self.0.y * v.0.z - self.0.z * v.0.y;
+        let y = self.0.z * v.0.x - self.0.x * v.0.z;
+        let z = self.0.x * v.0.y - self.0.y * v.0.x;
+        Vector3(na::Vector3::new(x, y, z))
+        // Vector3(v.0.cross(&v.0))
+    }
+
+    fn dot(&self, v: PyRef<Vector3>) -> f64 {
+        self.0.x * v.0.x + self.0.y * v.0.y + self.0.z * v.0.z
+        // v.0.dot(&v.0)
     }
 
     fn __neg__(&self) -> Vector3 {
