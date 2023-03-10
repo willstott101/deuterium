@@ -1,7 +1,7 @@
 use crate::vec3::Vector3;
 use approx::AbsDiffEq;
-use nalgebra::SMatrix;
 use nalgebra as na;
+use nalgebra::SMatrix;
 use pyo3::exceptions::PyIndexError;
 use pyo3::prelude::*;
 use pyo3::pyclass::CompareOp;
@@ -94,14 +94,18 @@ impl Matrix4 {
     }
 
     // fn invert(&mut self) -> PyResult<()> {
-    //     // TODO: Should this Matrix be an nalgebra Projective? 
+    //     // TODO: Should this Matrix be an nalgebra Projective?
     //     self.0 = self.0.pseudo_inverse(0.00001)?;
     //     Ok(());
     // }
 
     #[getter]
     fn get_translation(&self) -> Vector3 {
-        Vector3(na::Vector3::new(self.0[(0, 3)], self.0[(1, 3)], self.0[(2, 3)]))
+        Vector3(na::Vector3::new(
+            self.0[(0, 3)],
+            self.0[(1, 3)],
+            self.0[(2, 3)],
+        ))
     }
 
     #[setter]

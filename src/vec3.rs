@@ -120,6 +120,14 @@ impl Vector3 {
         self.0.len()
     }
 
+    fn length(&self) -> f64 {
+        self.0.magnitude()
+    }
+
+    fn length_squared(&self) -> f64 {
+        self.0.magnitude_squared()
+    }
+
     fn __iadd__(&mut self, v: &Vector3) -> () {
         self.0[0] += v.0[0];
         self.0[1] += v.0[1];

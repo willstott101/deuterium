@@ -1,3 +1,4 @@
+use crate::quat::UnitQuaternion;
 use crate::vec3::Vector3;
 use approx::AbsDiffEq;
 use nalgebra as na;
@@ -38,7 +39,9 @@ impl Isometry3 {
         }
         let vecr: PyResult<PyRef<Vector3>> = arg.extract();
         if let Ok(vec) = vecr {
-            return Ok(Py::new(py, Vector3::from_p3(&self.0.transform_point(&vec.as_p3())))?.to_object(py));
+            return Ok(
+                Py::new(py, Vector3::from_p3(&self.0.transform_point(&vec.as_p3())))?.to_object(py),
+            );
         }
         Ok(py.NotImplemented())
     }
@@ -76,5 +79,16 @@ impl Isometry3 {
 
     fn translate(&mut self, v: PyRef<Vector3>) -> () {
         self.0.translation *= v.as_translation();
+    }
+
+    #[getter]
+    fn get_rotation(&self) -> UnitQuaternion {
+        UnitQuaternion(self.0.rotation)
+    }
+
+    #[setter]
+    fn set_rotation(&mut self, v: PyRef<UnitQuaternion>) -> PyResult<()> {
+        self.0.rotation = v.0;
+        Ok(())
     }
 }
