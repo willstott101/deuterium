@@ -17,6 +17,11 @@ impl UnitQuaternion {
     }
 
     #[staticmethod]
+    fn identity() -> Self {
+        return UnitQuaternion(na::UnitQuaternion::identity());
+    }
+
+    #[staticmethod]
     fn from_axis_angle(v: &Vector3, a: f64) -> UnitQuaternion {
         let vn = na::Unit::new_normalize(v.0);
         return UnitQuaternion(na::UnitQuaternion::from_axis_angle(&vn, a));

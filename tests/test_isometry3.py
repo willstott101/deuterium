@@ -2,8 +2,8 @@ import pytest
 from deuterium import Isometry3, Matrix4, Vector3
 
 
-def test_constructor():
-    assert Matrix4.identity()
+def test_identity():
+    assert Isometry3.identity()
 
 
 # def test_repr():
@@ -19,6 +19,7 @@ def test_translation():
     iso.translation = Vector3(3, 2, 1)
     assert iso.translation == Vector3(3, 2, 1)
     assert iso == Isometry3.from_translation(Vector3(3, 2, 1))
+
 
 # def test_ops():
 #     assert Vector3(1, 2, 3) + Vector3(10, 20, 30) == Vector3(11, 22, 33)
