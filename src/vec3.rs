@@ -125,16 +125,16 @@ impl Vector3 {
         }
     }
 
-    fn approx_equals(&self, v: &Vector3) -> bool {
-        self.0.abs_diff_eq(&v.0, 1e-08)
+    fn approx_equals(&self, other: &Vector3) -> bool {
+        self.0.abs_diff_eq(&other.0, 1e-08)
     }
 
-    fn __add__(&self, v: &Vector3) -> Vector3 {
-        Vector3(self.0 + v.0)
+    fn __add__(&self, other: &Vector3) -> Vector3 {
+        Vector3(self.0 + other.0)
     }
 
-    fn __sub__(&self, v: &Vector3) -> Vector3 {
-        Vector3(self.0 - v.0)
+    fn __sub__(&self, other: &Vector3) -> Vector3 {
+        Vector3(self.0 - other.0)
     }
 
     fn __len__(&self) -> usize {
@@ -166,16 +166,16 @@ impl Vector3 {
         (other.0 - self.0).magnitude_squared()
     }
 
-    fn __iadd__(&mut self, v: &Vector3) -> () {
-        self.0[0] += v.0[0];
-        self.0[1] += v.0[1];
-        self.0[2] += v.0[2];
+    fn __iadd__(&mut self, other: &Vector3) -> () {
+        self.0[0] += other.0[0];
+        self.0[1] += other.0[1];
+        self.0[2] += other.0[2];
     }
 
-    fn __isub__(&mut self, v: &Vector3) -> () {
-        self.0[0] -= v.0[0];
-        self.0[1] -= v.0[1];
-        self.0[2] -= v.0[2];
+    fn __isub__(&mut self, other: &Vector3) -> () {
+        self.0[0] -= other.0[0];
+        self.0[1] -= other.0[1];
+        self.0[2] -= other.0[2];
     }
 
     fn __mul__(&self, arg: f64) -> Vector3 {
@@ -194,19 +194,47 @@ impl Vector3 {
         self.0 /= arg;
     }
 
-    fn premultiply(&mut self, arg: &mat4::Matrix4) -> () {
-        let v = arg.0 * self.as_4();
+    fn premultiply(&mut self, other: &mat4::Matrix4) -> () {
+        let v = other.0 * self.as_4();
         self.0[0] = v[0];
         self.0[1] = v[1];
         self.0[2] = v[2];
     }
 
-    fn cross(&self, v: PyRef<Vector3>) -> Vector3 {
-        Vector3(self.0.cross(&v.0))
+    fn cross(&self, other: PyRef<Vector3>) -> Vector3 {
+        Vector3(self.0.cross(&other.0))
     }
 
-    fn dot(&self, v: PyRef<Vector3>) -> f64 {
-        self.0.dot(&v.0)
+    fn dot(&self, other: PyRef<Vector3>) -> f64 {
+        self.0.dot(&other.0)
+    }
+
+    fn angle_between(&self, other: PyRef<Vector3>) -> f64 {
+        self.0.angle(&other.0)
+    }
+
+    /// Projects the current vector onto the given `other` vector.
+    ///
+    /// The resulting vector represents the component of the current vector that lies
+    /// along the direction of the `other` vector. If the `other` vector is already
+    /// normalized (i.e., it has a length of 1), the magnitude of the resulting vector
+    /// will be equal to the length of the projection. If the `other` vector is not
+    /// normalized, the magnitude of the resulting vector will be scaled by the length
+    /// of the `other` vector.
+    ///
+    /// It is not necessary to normalize the input vectors before calling this method,
+    /// but doing so can make it easier to interpret the resulting vector's magnitude
+    /// in certain applications.
+    fn project_onto(&self, other: PyRef<Vector3>) -> Vector3 {
+        let scalar_proj = self.0.dot(&other.0) / other.0.magnitude_squared();
+        Vector3(other.0 * scalar_proj)
+    }
+
+    /// Returns a new Vector3 object which lies 't' position along the
+    /// line from self to other where a 't' of 1 is at the same position as
+    /// other and a't' of 0 is at the same position as self.
+    fn lerp(&self, other: PyRef<Vector3>, t: f64) -> Vector3 {
+        Vector3(self.0.lerp(&other.0, t))
     }
 
     fn __neg__(&self) -> Vector3 {

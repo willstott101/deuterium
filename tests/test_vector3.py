@@ -1,3 +1,4 @@
+import math
 import pytest
 from deuterium import Vector3
 
@@ -114,3 +115,25 @@ def test_dot():
     assert Vector3(3).dot(Vector3(0, 6, 0)) == 0
     assert Vector3(1, 2, 3).dot(Vector3(0.1, 0.2, 0.3)) == 1.4
 
+
+def test_angle_between():
+    v1 = Vector3(1, 0, 0)
+    v2 = Vector3(0, 1, 0)
+    v3 = Vector3(1, 1, 0)
+    assert math.isclose(v1.angle_between(v2), math.pi / 2, rel_tol=1e-8)
+    assert math.isclose(v1.angle_between(v3), math.pi / 4, rel_tol=1e-8)
+
+
+def test_project_onto():
+    v1 = Vector3(3, 3, 0)
+    v2 = Vector3(2, 0, 0)
+    result = v1.project_onto(v2)
+    assert result.approx_equals(Vector3(3, 0, 0))
+
+
+def test_lerp():
+    v1 = Vector3(1, 0, 0)
+    v2 = Vector3(0, 1, 0)
+    assert v1.lerp(v2, 0).approx_equals(v1)
+    assert v1.lerp(v2, 1).approx_equals(v2)
+    assert v1.lerp(v2, 0.5).approx_equals(Vector3(0.5, 0.5, 0))
