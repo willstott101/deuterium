@@ -99,6 +99,10 @@ impl Matrix4 {
     //     Ok(());
     // }
 
+    fn transposed(&self) -> Matrix4 {
+        Matrix4(self.0.transpose())
+    }
+
     #[getter]
     fn get_translation(&self) -> Vector3 {
         Vector3(na::Vector3::new(
@@ -185,5 +189,65 @@ impl Matrix4 {
                 self.0[(3, 3)],
             ],
         ];
+    }
+
+    fn __repr__(&self) -> String {
+        use std::cmp::max;
+
+        let mut s00 = format!("{:?}", self.0[(0, 0)]);
+        let mut s01 = format!("{:?}", self.0[(0, 1)]);
+        let mut s02 = format!("{:?}", self.0[(0, 2)]);
+        let mut s03 = format!("{:?}", self.0[(0, 3)]);
+        let mut s10 = format!("{:?}", self.0[(1, 0)]);
+        let mut s11 = format!("{:?}", self.0[(1, 1)]);
+        let mut s12 = format!("{:?}", self.0[(1, 2)]);
+        let mut s13 = format!("{:?}", self.0[(1, 3)]);
+        let mut s20 = format!("{:?}", self.0[(2, 0)]);
+        let mut s21 = format!("{:?}", self.0[(2, 1)]);
+        let mut s22 = format!("{:?}", self.0[(2, 2)]);
+        let mut s23 = format!("{:?}", self.0[(2, 3)]);
+        let mut s30 = format!("{:?}", self.0[(3, 0)]);
+        let mut s31 = format!("{:?}", self.0[(3, 1)]);
+        let mut s32 = format!("{:?}", self.0[(3, 2)]);
+        let mut s33 = format!("{:?}", self.0[(3, 3)]);
+
+        let len_col_0 = max(s00.len(), max(s10.len(), max(s20.len(), s30.len())));
+        let len_col_1 = max(s01.len(), max(s11.len(), max(s21.len(), s31.len())));
+        let len_col_2 = max(s02.len(), max(s12.len(), max(s22.len(), s32.len())));
+        let len_col_3 = max(s03.len(), max(s13.len(), max(s23.len(), s33.len())));
+
+        s00 = format!("{:width$}", s00, width = len_col_0);
+        s01 = format!("{:width$}", s01, width = len_col_1);
+        s02 = format!("{:width$}", s02, width = len_col_2);
+        s03 = format!("{:width$}", s03, width = len_col_3);
+        s10 = format!("{:width$}", s10, width = len_col_0);
+        s11 = format!("{:width$}", s11, width = len_col_1);
+        s12 = format!("{:width$}", s12, width = len_col_2);
+        s13 = format!("{:width$}", s13, width = len_col_3);
+        s20 = format!("{:width$}", s20, width = len_col_0);
+        s21 = format!("{:width$}", s21, width = len_col_1);
+        s22 = format!("{:width$}", s22, width = len_col_2);
+        s23 = format!("{:width$}", s23, width = len_col_3);
+        s30 = format!("{:width$}", s30, width = len_col_0);
+        s31 = format!("{:width$}", s31, width = len_col_1);
+        s32 = format!("{:width$}", s32, width = len_col_2);
+        s33 = format!("{:width$}", s33, width = len_col_3);
+
+        format!("Matrix4<{}, {}, {}, {},\n        {}, {}, {}, {},\n        {}, {}, {}, {},\n        {}, {}, {}, {}>", s00,
+s01,
+s02,
+s03,
+s10,
+s11,
+s12,
+s13,
+s20,
+s21,
+s22,
+s23,
+s30,
+s31,
+s32,
+s33)
     }
 }

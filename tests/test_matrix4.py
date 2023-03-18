@@ -64,6 +64,16 @@ def test_translation():
     assert m.translation == Vector3(3, 2, 1)
     assert m == Matrix4.from_translation(Vector3(3, 2, 1))
 
+
+def test_transpose():
+    m = Matrix4.identity()
+    m[0, 1] = 5
+    m[1, 0] = -5
+    mt = m.transposed()
+    assert mt[0, 1] == -5
+    assert mt[1, 0] == 5
+
+
 # def test_ops():
 #     assert Vector3(1, 2, 3) + Vector3(10, 20, 30) == Vector3(11, 22, 33)
 #     assert Vector3(1, 2, 3) - Vector3(10, 20, 30) == Vector3(-9, -18, -27)
