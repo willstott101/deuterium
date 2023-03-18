@@ -202,16 +202,11 @@ impl Vector3 {
     }
 
     fn cross(&self, v: PyRef<Vector3>) -> Vector3 {
-        let x = self.0.y * v.0.z - self.0.z * v.0.y;
-        let y = self.0.z * v.0.x - self.0.x * v.0.z;
-        let z = self.0.x * v.0.y - self.0.y * v.0.x;
-        Vector3(na::Vector3::new(x, y, z))
-        // Vector3(v.0.cross(&v.0))
+        Vector3(self.0.cross(&v.0))
     }
 
     fn dot(&self, v: PyRef<Vector3>) -> f64 {
-        self.0.x * v.0.x + self.0.y * v.0.y + self.0.z * v.0.z
-        // v.0.dot(&v.0)
+        self.0.dot(&v.0)
     }
 
     fn __neg__(&self) -> Vector3 {
