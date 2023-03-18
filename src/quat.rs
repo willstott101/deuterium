@@ -32,6 +32,11 @@ impl UnitQuaternion {
         return UnitQuaternion(na::UnitQuaternion::from_scaled_axis(v.0));
     }
 
+    #[staticmethod]
+    fn from_euler(roll: f64, pitch: f64, yaw: f64) -> UnitQuaternion {
+        UnitQuaternion(na::UnitQuaternion::from_euler_angles(roll, pitch, yaw))
+    }
+
     fn __getitem__(&self, idx: isize) -> Result<f64, PyErr> {
         let i: usize = if idx < 0 && idx > -(self.__len__() as isize + 1) {
             (self.__len__() as isize + idx) as usize
@@ -106,6 +111,50 @@ impl UnitQuaternion {
 
     fn invert(&mut self) -> () {
         self.0 = self.0.conjugate();
+    }
+
+    /// Performs a spherical linear interpolation (slerp) between `self` and `other` unit quaternions.
+    /// The interpolation parameter `t` ranges from 0 to 1, where 0 corresponds to `self` and 1 corresponds to `other`.
+    /// When t is in-between 0 and 1, it returns a smoothly interpolated quaternion between `self` and `other`.
+    fn slerp(&self, other: PyRef<UnitQuaternion>, t: f64) -> UnitQuaternion {
+        UnitQuaternion(self.0.slerp(&other.0, t))
+    }
+
+    /// Returns the angle of rotation (in radians) represented by the UnitQuaternion.
+    ///
+    /// Axis-angle representation is a way to describe the orientation of an object
+    /// in 3D space. It consists of a unit vector (the axis) and an angle. The object
+    /// is rotated around the axis by the specified angle. The angle is expressed in
+    /// radians and lies within the range [0, π].
+    ///
+    /// Note: The returned angle might be the negation of the actual angle if the
+    /// quaternion represents the same rotation with an inverted axis.
+    fn angle(&self) -> f64 {
+        self.0.angle()
+    }
+
+    /// Returns the normalized axis of rotation represented by the UnitQuaternion.
+    ///
+    /// Axis-angle representation is a way to describe the orientation of an object
+    /// in 3D space. It consists of a unit vector (the axis) and an angle. The object
+    /// is rotated around the axis by the specified angle. The axis vector is
+    /// normalized to ensure that its magnitude is 1.
+    ///
+    /// Note: The returned axis might be the negation of the actual axis if the
+    /// quaternion represents the same rotation with an inverted angle.
+    ///
+    /// Note: The axis might be None or undefined in the case of a zero rotation,
+    /// which is when the angle of rotation is exactly 0 or a multiple of 2π.
+    fn axis(&self) -> Option<Vector3> {
+        match self.0.axis() {
+            Some(a) => Some(Vector3(*a)),
+            None => None,
+        }
+    }
+
+    /// Returns this rotation and (roll, pitch, yaw) euler angles.
+    fn euler(&self) -> (f64, f64, f64) {
+        self.0.euler_angles()
     }
 
     fn tuple(&self) -> (f64, f64, f64, f64) {
