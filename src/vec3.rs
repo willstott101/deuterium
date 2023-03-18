@@ -194,9 +194,11 @@ impl Vector3 {
         self.0 /= arg;
     }
 
-    fn premultiply(&self, arg: &mat4::Matrix4) -> Vector3 {
+    fn premultiply(&mut self, arg: &mat4::Matrix4) -> () {
         let v = arg.0 * self.as_4();
-        Vector3(na::Vector3::new(v[0], v[1], v[2]))
+        self.0[0] = v[0];
+        self.0[1] = v[1];
+        self.0[2] = v[2];
     }
 
     fn cross(&self, v: PyRef<Vector3>) -> Vector3 {
