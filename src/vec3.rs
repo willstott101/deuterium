@@ -178,12 +178,25 @@ impl Vector3 {
         self.0 -= other.0;
     }
 
-    fn __mul__(&self, arg: f64) -> Vector3 {
-        Vector3(self.0 * arg)
+    fn __mul__(&self, arg: &PyAny) -> PyResult<Vector3> {
+        let scalarr: PyResult<f64> = arg.extract();
+        if let Ok(scalar) = scalarr {
+            return Ok(Vector3(self.0 * scalar));
+        }
+        let vecr: PyResult<PyRef<Vector3>> = arg.extract();
+        if let Ok(vec) = vecr {
+            return Ok(Vector3(na::Vector3::new(self.0.x * vec.0.x, self.0.y * vec.0.y, self.0.z * vec.0.z)));
+        }
+        return Err(PyTypeError::new_err(format!(
+            "Cannot multiply a Vector3 by {}",
+            arg.get_type().name().unwrap_or("?")
+        )));
     }
 
-    fn __imul__(&mut self, arg: f64) -> () {
-        self.0 *= arg;
+    fn __imul__(&mut self, arg: &PyAny) -> PyResult<()> {
+        let r = self.__mul__(arg)?;
+        self.0 = r.0;
+        Ok(())
     }
 
     fn __truediv__(&self, arg: f64) -> Vector3 {
