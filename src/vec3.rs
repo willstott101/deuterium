@@ -1,6 +1,9 @@
+use crate::iso::Isometry3;
+use crate::mat4::Matrix4;
+use crate::quat::UnitQuaternion;
 use approx::AbsDiffEq;
 use nalgebra as na;
-use pyo3::exceptions::PyIndexError;
+use pyo3::exceptions::{PyIndexError, PyTypeError};
 use pyo3::prelude::*;
 use pyo3::pyclass::CompareOp;
 // use pyo3::types::PySequence;
@@ -8,6 +11,7 @@ use pyo3::pyclass::CompareOp;
 use crate::mat4;
 
 #[pyclass]
+#[derive(Clone)]
 pub struct Vector3(pub na::Vector3<f64>);
 
 impl Vector3 {
@@ -167,15 +171,11 @@ impl Vector3 {
     }
 
     fn __iadd__(&mut self, other: &Vector3) -> () {
-        self.0[0] += other.0[0];
-        self.0[1] += other.0[1];
-        self.0[2] += other.0[2];
+        self.0 += other.0;
     }
 
     fn __isub__(&mut self, other: &Vector3) -> () {
-        self.0[0] -= other.0[0];
-        self.0[1] -= other.0[1];
-        self.0[2] -= other.0[2];
+        self.0 -= other.0;
     }
 
     fn __mul__(&self, arg: f64) -> Vector3 {
@@ -225,9 +225,15 @@ impl Vector3 {
     /// It is not necessary to normalize the input vectors before calling this method,
     /// but doing so can make it easier to interpret the resulting vector's magnitude
     /// in certain applications.
-    fn project_onto(&self, other: PyRef<Vector3>) -> Vector3 {
+    fn projected_onto(&self, other: PyRef<Vector3>) -> Vector3 {
         let scalar_proj = self.0.dot(&other.0) / other.0.magnitude_squared();
         Vector3(other.0 * scalar_proj)
+    }
+
+    /// Performs projected_onto in-place
+    fn project_onto(&mut self, other: PyRef<Vector3>) -> () {
+        let scalar_proj = self.0.dot(&other.0) / other.0.magnitude_squared();
+        self.0 = other.0 * scalar_proj;
     }
 
     /// Returns a new Vector3 object which lies 't' position along the
@@ -235,6 +241,33 @@ impl Vector3 {
     /// other and a't' of 0 is at the same position as self.
     fn lerp(&self, other: PyRef<Vector3>, t: f64) -> Vector3 {
         Vector3(self.0.lerp(&other.0, t))
+    }
+
+    fn transformed(&self, arg: &PyAny) -> PyResult<Vector3> {
+        let isor: PyResult<PyRef<Isometry3>> = arg.extract();
+        if let Ok(iso) = isor {
+            // For now recommending to use Vector3.transformed(Isometry3.rotation()) for transform_vector
+            return Ok(Vector3::from_p3(&iso.0.transform_point(&self.as_p3())));
+        }
+        let matr: PyResult<PyRef<Matrix4>> = arg.extract();
+        if let Ok(mat) = matr {
+            // For now recommending to use Vector3.transformed(Matrix4.rotation()) for transform_vector
+            return Ok(Vector3::from_p3(&mat.0.transform_point(&self.as_p3())));
+        }
+        let quatr: PyResult<PyRef<UnitQuaternion>> = arg.extract();
+        if let Ok(quat) = quatr {
+            return Ok(Vector3(quat.0.transform_vector(&self.0)));
+        }
+        return Err(PyTypeError::new_err(format!(
+            "Cannot transform a Vector3 by {}",
+            arg.get_type().name().unwrap_or("?")
+        )));
+    }
+
+    fn transform(&mut self, arg: &PyAny) -> PyResult<()> {
+        let t = self.transformed(arg)?;
+        self.0 = t.0;
+        Ok(())
     }
 
     fn __neg__(&self) -> Vector3 {

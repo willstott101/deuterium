@@ -127,8 +127,11 @@ def test_angle_between():
 def test_project_onto():
     v1 = Vector3(3, 3, 0)
     v2 = Vector3(2, 0, 0)
-    result = v1.project_onto(v2)
+    result = v1.projected_onto(v2)
     assert result.approx_equals(Vector3(3, 0, 0))
+
+    v1.project_onto(v2)
+    assert v1 == result == Vector3(3, 0, 0)
 
 
 def test_lerp():
