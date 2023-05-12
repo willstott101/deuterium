@@ -153,7 +153,7 @@ impl UnitQuaternion {
         }
     }
 
-    /// Returns this rotation and (roll, pitch, yaw) euler angles.
+    /// Returns this rotation as (roll, pitch, yaw) euler angles.
     fn euler(&self) -> (f64, f64, f64) {
         self.0.euler_angles()
     }
