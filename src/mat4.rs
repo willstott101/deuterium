@@ -85,7 +85,8 @@ impl Matrix4 {
         self.0 = self.0 * arg.0;
     }
 
-    fn __len__(&self) -> usize {
+    #[staticmethod]
+    fn __len__() -> usize {
         4
     }
 

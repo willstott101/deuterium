@@ -141,8 +141,9 @@ impl Vector3 {
         Vector3(self.0 - other.0)
     }
 
-    fn __len__(&self) -> usize {
-        self.0.len()
+    #[staticmethod]
+    fn __len__() -> usize {
+        3
     }
 
     fn length(&self) -> f64 {

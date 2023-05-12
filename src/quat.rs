@@ -38,8 +38,8 @@ impl UnitQuaternion {
     }
 
     fn __getitem__(&self, idx: isize) -> Result<f64, PyErr> {
-        let i: usize = if idx < 0 && idx > -(self.__len__() as isize + 1) {
-            (self.__len__() as isize + idx) as usize
+        let i: usize = if idx < 0 && idx > -5 {
+            (4 + idx) as usize
         } else {
             match TryInto::<usize>::try_into(idx) {
                 Err(_) => Err(PyIndexError::new_err(idx))?,
@@ -79,7 +79,8 @@ impl UnitQuaternion {
         self.0.abs_diff_eq(&v.0, 1e-08)
     }
 
-    fn __len__(&self) -> usize {
+    #[staticmethod]
+    fn __len__() -> usize {
         4
     }
 

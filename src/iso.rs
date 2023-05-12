@@ -50,10 +50,6 @@ impl Isometry3 {
         self.0 = self.0 * arg.0;
     }
 
-    fn __len__(&self) -> usize {
-        4
-    }
-
     fn premultiply(&mut self, arg: &Isometry3) -> () {
         self.0 = arg.0 * self.0;
     }
